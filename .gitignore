@@ -7,7 +7,12 @@ Desktop.ini
 
 # Recycle Bin used on file shares
 $RECYCLE.BIN/
-
+Assemblies/AlienRace.dll.config
+Source/*/.vs
+Source/*/bin
+Source/*/obj
+Source/*/packages
+Source/*/debug
 # Windows Installer files
 *.cab
 *.msi
