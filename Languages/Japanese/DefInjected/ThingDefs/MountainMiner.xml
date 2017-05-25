@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+
+<ManualMountainMiner.label>岩盤掘削機</ManualMountainMiner.label>
+  <ManualMountainMiner.description>岩盤掘削機は、指定したエリアで横方向以外への掘削をするために使用される手動操作の機械です。岩盤天井の取り外しを可能にし、掘削作業によって岩の塊を生成します。</ManualMountainMiner.description>
+  <ManualMountainMiner_Blueprint.label>岩盤掘削機(設計)</ManualMountainMiner_Blueprint.label>
+  <ManualMountainMiner_Blueprint_Install.label>岩盤掘削機(移動先)</ManualMountainMiner_Blueprint_Install.label>
+  <ManualMountainMiner_Frame.label>岩盤掘削機(施工)</ManualMountainMiner_Frame.label>
+  <ManualMountainMiner_Frame.description>岩盤掘削機は、指定したエリアで横方向以外への掘削をするために使用される手動操作の機械です。岩盤天井の取り外しを可能にし、掘削作業によって岩の塊を生成します。</ManualMountainMiner_Frame.description>
+
+</LanguageData>
