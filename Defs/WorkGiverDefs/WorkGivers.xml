@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<WorkGivers>
+<Defs>
   <WorkGiverDef>
     <defName>DrillUp</defName>
     <label>drillup</label>
@@ -12,4 +12,4 @@
       <li>Manipulation</li>
     </requiredCapacities>
   </WorkGiverDef>
-</WorkGivers>
+</Defs>

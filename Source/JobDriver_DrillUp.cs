@@ -11,33 +11,34 @@ namespace MountainMiner
     class JobDriver_DrillUp : JobDriver
     {
         const int ticks = GenDate.TicksPerDay;
-        Building_MountainDrill comp => (Building_MountainDrill)TargetA.Thing;
+        Building_MountainDrill Comp => (Building_MountainDrill)this.TargetA.Thing;
+
+        public override bool TryMakePreToilReservations() => this.pawn.Reserve(this.TargetA, this.job);
 
         protected override IEnumerable<Toil> MakeNewToils()
         {
             this.FailOn(() => {
-                if (comp.CanDrillNow()) return false;
+                if (this.Comp.CanDrillNow()) return false;
                 return true;
             });
-            yield return Toils_Reserve.Reserve(TargetIndex.A).FailOnDespawnedNullOrForbidden(TargetIndex.A);
             yield return Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.Touch).FailOnDespawnedNullOrForbidden(TargetIndex.A);
 
             Toil mine = new Toil();
             mine.WithEffect(EffecterDefOf.Drill, TargetIndex.A);
-            mine.WithProgressBar(TargetIndex.A, () => comp.Progress);
+            mine.WithProgressBar(TargetIndex.A, () => this.Comp.Progress);
             mine.tickAction = delegate
             {
-                var pawn = mine.actor;
-                comp.Drill(pawn.GetStatValue(StatDefOf.MiningSpeed) / ticks);
+                Pawn pawn = mine.actor;
+                this.Comp.Drill(pawn.GetStatValue(StatDefOf.MiningSpeed) / ticks);
                 pawn.skills.Learn(SkillDefOf.Mining, 0.125f);
-                if (comp.Progress>=1)
+                if (this.Comp.Progress>=1)
                 {
-                    comp.DrillWorkDone(pawn);
+                    this.Comp.DrillWorkDone(pawn);
                     EndJobWith(JobCondition.Succeeded);
                     pawn.records.Increment(RecordDefOf.CellsMined);
                 }
             };
-            mine.WithEffect(TargetThingA.def.repairEffect, TargetIndex.A);
+            mine.WithEffect(this.TargetThingA.def.repairEffect, TargetIndex.A);
             mine.defaultCompleteMode = ToilCompleteMode.Never;
             yield return mine;
         }

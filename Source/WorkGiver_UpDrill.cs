@@ -8,26 +8,11 @@ namespace MountainMiner
 {
     public class WorkGiver_UpDrill : WorkGiver_Scanner
     {
-        public override ThingRequest PotentialWorkThingRequest
-        {
-            get
-            {
-                return ThingRequest.ForDef(ThingDef.Named("ManualMountainMiner"));
-            }
-        }
+        public override ThingRequest PotentialWorkThingRequest => ThingRequest.ForDef(ThingDef.Named("ManualMountainMiner"));
 
-        public override PathEndMode PathEndMode
-        {
-            get
-            {
-                return PathEndMode.InteractionCell;
-            }
-        }
+        public override PathEndMode PathEndMode => PathEndMode.InteractionCell;
 
-        public override IEnumerable<Thing> PotentialWorkThingsGlobal(Pawn pawn)
-        {
-            return pawn.Map.listerBuildings.AllBuildingsColonistOfDef(ThingDef.Named("ManualMountainMiner")).Cast<Thing>();
-        }
+        public override IEnumerable<Thing> PotentialWorkThingsGlobal(Pawn pawn) => pawn.Map.listerBuildings.AllBuildingsColonistOfDef(ThingDef.Named("ManualMountainMiner")).Cast<Thing>();
 
         public override bool ShouldSkip(Pawn pawn)
         {
@@ -46,7 +31,7 @@ namespace MountainMiner
             return true;
         }
 
-        public override bool HasJobOnThing(Pawn pawn, Thing t)
+        public override bool HasJobOnThing(Pawn pawn, Thing t, bool forced = false)
         {
             if (t.Faction != pawn.Faction)
             {
@@ -68,10 +53,7 @@ namespace MountainMiner
             Building_MountainDrill mountainDrill = (Building_MountainDrill) building;
             return mountainDrill.CanDrillNow() && !building.IsBurning();
         }
-
-        public override Job JobOnThing(Pawn pawn, Thing t)
-        {
-            return new Job(JobDefOf_MM.OperateHighDrill, t, 1500, true);
-        }
+        
+        public override Job JobOnThing(Pawn pawn, Thing t, bool forced = false) => new Job(JobDefOf_MM.OperateHighDrill, t, 1500, true);
     }
 }
