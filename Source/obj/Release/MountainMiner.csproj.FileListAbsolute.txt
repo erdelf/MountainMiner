@@ -1,0 +1,4 @@
+C:\Games\Steam\steamapps\common\RimWorld\Mods\MountainMiner\Source\bin\Release\MountainMiner.dll
+C:\Games\Steam\steamapps\common\RimWorld\Mods\MountainMiner\Source\obj\Release\MountainMiner.csprojAssemblyReference.cache
+C:\Games\Steam\steamapps\common\RimWorld\Mods\MountainMiner\Source\obj\Release\MountainMiner.csproj.CoreCompileInputs.cache
+C:\Games\Steam\steamapps\common\RimWorld\Mods\MountainMiner\Source\obj\Release\MountainMiner.dll

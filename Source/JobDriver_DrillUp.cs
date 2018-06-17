@@ -1,44 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using Verse;
 using RimWorld;
 using Verse.AI;
 
 namespace MountainMiner
 {
-    class JobDriver_DrillUp : JobDriver
-    {
-        const int ticks = GenDate.TicksPerDay;
-        Building_MountainDrill Comp => (Building_MountainDrill)this.TargetA.Thing;
+    using JetBrains.Annotations;
 
-        public override bool TryMakePreToilReservations() => this.pawn.Reserve(this.TargetA, this.job);
+    [UsedImplicitly]
+    internal class JobDriver_DrillUp : JobDriver
+    {
+        private const int TICKS = GenDate.TicksPerDay;
+        private Building_MountainDrill Comp => (Building_MountainDrill)this.TargetA.Thing;
+
+        public override bool TryMakePreToilReservations() => this.pawn.Reserve(target: this.TargetA, job: this.job);
 
         protected override IEnumerable<Toil> MakeNewToils()
         {
-            this.FailOn(() => {
-                if (this.Comp.CanDrillNow()) return false;
-                return true;
-            });
-            yield return Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.Touch).FailOnDespawnedNullOrForbidden(TargetIndex.A);
+            this.FailOn(condition: () => !this.Comp.CanDrillNow());
+            yield return Toils_Goto.GotoThing(ind: TargetIndex.A, peMode: PathEndMode.Touch).FailOnDespawnedNullOrForbidden(ind: TargetIndex.A);
 
             Toil mine = new Toil();
-            mine.WithEffect(EffecterDefOf.Drill, TargetIndex.A);
-            mine.WithProgressBar(TargetIndex.A, () => this.Comp.Progress);
+            mine.WithEffect(effectDef: EffecterDefOf.Drill, ind: TargetIndex.A);
+            mine.WithProgressBar(ind: TargetIndex.A, progressGetter: () => this.Comp.Progress);
             mine.tickAction = delegate
             {
-                Pawn pawn = mine.actor;
-                this.Comp.Drill(pawn.GetStatValue(StatDefOf.MiningSpeed) / ticks);
-                pawn.skills.Learn(SkillDefOf.Mining, 0.125f);
-                if (this.Comp.Progress>=1)
-                {
-                    this.Comp.DrillWorkDone(pawn);
-                    EndJobWith(JobCondition.Succeeded);
-                    pawn.records.Increment(RecordDefOf.CellsMined);
-                }
+                Pawn minePawn = mine.actor;
+                this.Comp.Drill(miningPoints: minePawn.GetStatValue(stat: StatDefOf.MiningSpeed) / TICKS);
+                minePawn.skills.Learn(sDef: SkillDefOf.Mining, xp: 0.125f);
+                if (!(this.Comp.Progress >= 1)) return;
+                this.Comp.DrillWorkDone(driller: minePawn);
+                this.EndJobWith(condition: JobCondition.Succeeded);
+                minePawn.records.Increment(def: RecordDefOf.CellsMined);
             };
-            mine.WithEffect(this.TargetThingA.def.repairEffect, TargetIndex.A);
+            mine.WithEffect(effectDef: this.TargetThingA.def.repairEffect, ind: TargetIndex.A);
             mine.defaultCompleteMode = ToilCompleteMode.Never;
             yield return mine;
         }

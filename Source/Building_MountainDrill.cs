@@ -1,14 +1,9 @@
 ﻿using RimWorld;
-using RimWorld.Planet;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Verse;
 
 namespace MountainMiner
 {
-    class Building_MountainDrill : Building
+    internal class Building_MountainDrill : Building
     {
         private CompPowerTrader powerComp;
 
@@ -22,22 +17,22 @@ namespace MountainMiner
 
         public override void SpawnSetup(Map map, bool respawningAfterLoad)
         {
-            base.SpawnSetup(map, respawningAfterLoad);
-            this.powerComp = GetComp<CompPowerTrader>();
+            base.SpawnSetup(map: map, respawningAfterLoad: respawningAfterLoad);
+            this.powerComp = this.GetComp<CompPowerTrader>();
         }
 
         public override void ExposeData()
         {
             base.ExposeData();
-            Scribe_Values.Look(ref this.progress, "MountainProgress", 0f);
+            Scribe_Values.Look(value: ref this.progress, label: "MountainProgress");
         }
 
         public void Drill(float miningPoints)
         {
             this.progress += miningPoints;
-            if (UnityEngine.Random.Range(0, 1000) == 0)
+            if (UnityEngine.Random.Range(min: 0, max: 1000) == 0)
             {
-                ProduceLump();
+                this.ProduceLump();
             }
         }
 
@@ -46,9 +41,9 @@ namespace MountainMiner
             for (int i = 0; i < 9; i++)
             {
                 IntVec3 intVec = this.Position + GenRadial.RadialPattern[i];
-                if (intVec.InBounds(this.Map))
+                if (intVec.InBounds(map: this.Map))
                 {
-                    this.Map.roofGrid.SetRoof(intVec, RoofDefOf.RoofRockThin);
+                    this.Map.roofGrid.SetRoof(c: intVec, def: RoofDefOf.RoofRockThin);
                 }
             }
             this.Progress = 0f;
@@ -56,12 +51,9 @@ namespace MountainMiner
 
         private void ProduceLump()
         {
-            if (TryGetNextResource(out ThingDef def, out IntVec3 c))
-            {
-                Thing thing = ThingMaker.MakeThing(def, null);
-                GenPlace.TryPlaceThing(thing, this.InteractionCell, this.Map, ThingPlaceMode.Near);
-            }
-            return;
+            if (!this.TryGetNextResource(resDef: out ThingDef resDef, cell: out IntVec3 _)) return;
+            Thing thing = ThingMaker.MakeThing(def: resDef);
+            GenPlace.TryPlaceThing(thing: thing, center: this.InteractionCell, map: this.Map, mode: ThingPlaceMode.Near);
         }
 
         public bool TryGetNextResource(out ThingDef resDef, out IntVec3 cell)
@@ -69,42 +61,40 @@ namespace MountainMiner
             for (int i = 0; i < 9; i++)
             {
                 IntVec3 intVec = this.Position + GenRadial.RadialPattern[i];
-                if (intVec.InBounds(this.Map))
+                if (!intVec.InBounds(map: this.Map)) continue;
+                ThingDef thingDef = DefDatabase<ThingDef>.GetNamed(defName: "Chunk" + this.Map.terrainGrid.TerrainAt(c: intVec).defName.Split('_')[0], errorOnFail: false);
+                //GenStep_RocksFromGrid.RockDefAt(intVec);
+                if (thingDef == null)
                 {
-                    ThingDef thingDef = DefDatabase<ThingDef>.GetNamed("Chunk" + this.Map.terrainGrid.TerrainAt(intVec).defName.Split('_')[0], false);
-                    //GenStep_RocksFromGrid.RockDefAt(intVec);
-                    if (thingDef == null)
-                    {
-                        if (!Find.World.NaturalRockTypesIn(this.Map.areaManager.Home.ID).TryRandomElement(out thingDef))
-                            thingDef = ThingDef.Named("Sandstone");
-                        thingDef = ThingDef.Named("Chunk" + thingDef);
-                    }
-                    //Log.Message(GenStep_RocksFromGrid.RockDefAt(intVec).defName);
-
-                    resDef = thingDef;
-                    cell = intVec;
-                    return true;
+                    if (!Find.World.NaturalRockTypesIn(tile: this.Map.areaManager.Home.ID).TryRandomElement(result: out thingDef))
+                        thingDef = ThingDef.Named(defName: "Sandstone");
+                    thingDef = ThingDef.Named(defName: "Chunk" + thingDef);
                 }
+                //Log.Message(GenStep_RocksFromGrid.RockDefAt(intVec).defName);
+
+                resDef = thingDef;
+                cell   = intVec;
+                return true;
             }
             resDef = null;
             cell = IntVec3.Invalid;
             return false;
         }
 
-        public bool CanDrillNow() => (this.powerComp == null || this.powerComp.PowerOn) && RoofPresent();
+        public bool CanDrillNow() => (this.powerComp == null || this.powerComp.PowerOn) && this.RoofPresent();
 
         public bool RoofPresent()
         {
             for (int i = 0; i < 9; i++)
             {
                 IntVec3 intVec = this.Position + GenRadial.RadialPattern[i];
-                if (intVec.InBounds(this.Map) && this.Map.roofGrid.RoofAt(intVec) != null && this.Map.roofGrid.RoofAt(intVec).isThickRoof)
+                if (intVec.InBounds(map: this.Map) && this.Map.roofGrid.RoofAt(c: intVec) != null && this.Map.roofGrid.RoofAt(c: intVec).isThickRoof)
                     return true;
             }
             return false;
         }
 
-        public override string GetInspectString() => string.Concat(new string[]
+        public override string GetInspectString() => string.Concat(values: new[]
             {
                 base.GetInspectString(),
                 "Progress"/*.Translate()*/,

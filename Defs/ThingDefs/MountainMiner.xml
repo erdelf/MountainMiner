@@ -9,6 +9,10 @@
     <size>(1,1)</size>
     <altitudeLayer>Building</altitudeLayer>
     <passability>PassThroughOnly</passability>
+    <category>Building</category>
+    <thingCategories>
+      <li>Manufactured</li>
+    </thingCategories>
     <pathCost>70</pathCost>
     <fillPercent>0.5</fillPercent>
     <interactionCellOffset>(0,0,-1)</interactionCellOffset>
@@ -20,7 +24,7 @@
     <costList>
       <Steel>400</Steel>
 	    <Plasteel>50</Plasteel>
-      <Component>20</Component>
+      <ComponentIndustrial>20</ComponentIndustrial>
     </costList>
     <placeWorkers>
       <li>MountainMiner.PlaceWorker_ShowRockRoof</li>
@@ -34,8 +38,9 @@
       <WorkToMake>5000</WorkToMake>
       <Flammability>1.0</Flammability>
       <Beauty>-25</Beauty>
+      <Mass>1</Mass>
     </statBases>
-    <minifiedDef>MinifiedFurniture</minifiedDef>
+    <minifiedDef>MinifiedThing</minifiedDef>
     <comps>
       <li Class="CompProperties_Forbiddable"/>
     </comps>
