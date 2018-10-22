@@ -13,7 +13,7 @@ namespace MountainMiner
         private const int TICKS = GenDate.TicksPerDay;
         private Building_MountainDrill Comp => (Building_MountainDrill)this.TargetA.Thing;
 
-        public override bool TryMakePreToilReservations() => this.pawn.Reserve(target: this.TargetA, job: this.job);
+        public override bool TryMakePreToilReservations(bool errorOnFailed) => this.pawn.Reserve(target: this.TargetA, job: this.job, errorOnFailed: errorOnFailed);
 
         protected override IEnumerable<Toil> MakeNewToils()
         {
